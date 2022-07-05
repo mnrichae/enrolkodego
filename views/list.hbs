@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+ 
+    <title>List of Students</title>
+
+        <!-- Load Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-end"><a href="/auth/logout/" class="btn btn-secondary">Logout</a></div>
+
+        <h1>{{title}}</h1>
+
+        <!-- Add new student --> 
+        <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Add new student
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/auth/register" method="post">
+
+                    <input class="p-1 mt-1 w-100" type="text" placeholder="First Name" id="first_name" name="first_name" required><br>
+                    <input class="p-1 mt-1 w-100" type="text" placeholder="Last Name" id="last_name" name="last_name" required><br>
+                    <input class="p-1 mt-1 w-100" type="email" placeholder="Email Address" id="email" name="email" required><br>
+                    <input class="p-1 mt-1 w-100" type="number" placeholder="Course ID 1-3" id="course_id" name="course_id" min="1" max="3" required>
+
+                
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="p-1 btn btn-primary">Save changes</button>
+                </div>
+                </form>
+                </div>
+            </div>
+        </div>
+        <!--end of Add new student-->
+
+        <table class="table">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each users}}
+                        <tr>
+                            <td>{{first_name}}</td>
+                            <td>{{last_name}}</td>
+                            <td>{{email}}</td>
+                            <td>{{course_name}}</td>
+                            <td><a href="/auth/delete/{{this.email}}" onclick="return confirm('Do you really want to Delete?');"
+                             type="button" class="btn btn-danger">Delete</a>
+                             {{!-- <a href="/auth/update-form/{{this.email}}" type="button" class="btn btn-success">Update</a> --}}
+                              <!-- Update student --> 
+                                <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#update_form" data-title="{{email}}" data-first-name="{{first_name}}" data-last-name="{{last_name}}" data-course-id="{{course_id}}">
+                                    Update
+                                    </button>
+                                <!--end of Updatestudent-->
+                             </td>
+                        </tr>
+                    {{/each}}
+                    
+                </tbody>
+        </table>
+
+        <div>
+              <!-- Modal -->
+                 <div class="modal fade" id="update_form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                     <div class="modal-dialog">
+                         <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" >Update Student</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/auth/update-user" method="post">
+                                    <input class="p-1 mt-1 w-100" type="text" placeholder="First Name" name="first_name" class="update_first_name" id="update_first_name" required><br>
+                                    <input class="p-1 mt-1 w-100" type="text" placeholder="Last Name" name="last_name" class="update_last_name" id="update_last_name" required><br>
+                                    <input class="p-1 mt-1 w-100" type="email" placeholder="Email Address" name="email" class="update_email"id="update_email" readonly required><br>
+                                    <input class="p-1 mt-1 w-100" type="number" placeholder="Course ID 1-3"name="course_id" class="update_course_id" id="update_course_id" min="1" max="5" required><br>
+                            </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="p-1 btn btn-primary">Update User</button>
+                                    </div>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+                <!--end of modal-->
+        </div>
+
+        {{#if message}}
+            <h4 class="alert alert-danger mp-4">{{message}}</h4>
+        {{/if}}
+    </div>
+        <script>
+            //for bootstrap dynamic content but same module
+            var exampleModal =
+                document.getElementById("update_form");
+                exampleModal.addEventListener("show.bs.modal", function (event) {
+
+                var button = event.relatedTarget;
+                var recipient = button.getAttribute("data-title");
+                let first_name = button.getAttribute("data-first-name");
+                let last_name = button.getAttribute("data-last-name");
+                let course_id = button.getAttribute("data-course-id");
+                var modalTitle = exampleModal.querySelector(".modal-title");
+
+                var modalBodyInput = exampleModal.querySelector(".modal-body #update_email");
+                let modalBodyFirstName = exampleModal.querySelector(".modal-body #update_first_name");
+                let modalBodyLastName = exampleModal.querySelector(".modal-body #update_last_name");
+                let modalBodyCourseId = exampleModal.querySelector(".modal-body #update_course_id");
+                modalTitle.textContent = "Update " + recipient; //displayed the title
+                modalBodyInput.value = recipient;
+                modalBodyFirstName.value = first_name;
+                modalBodyLastName.value = last_name;
+                modalBodyCourseId.value = course_id;
+            });
+        </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>

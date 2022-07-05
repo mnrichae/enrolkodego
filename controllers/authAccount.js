@@ -21,7 +21,7 @@ exports.login = async(req, res) => {
                 if (!results || password !== results[0].password) {
                     res.status(401).render('index', { message: 'Email or password is incorrect.' });
                 } else {
-                    db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id',
+                    db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id ORDER BY student_id',
                         (error, results) => {
                             console.log(results)
                             if (error) {
@@ -67,19 +67,19 @@ exports.register = (req, res) => {
                 db.query('INSERT INTO students (first_name, last_name, email, course_id) VALUES (?, ?, ?, ?);',
                 [req.body.first_name, req.body.last_name, req.body.email, req.body.course_id],
                     (err, results) => {
-                        db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id', (err, results) => {
+                        db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id ORDER BY student_id', (err, results) => {
                             if (err) {
                                 console.log(err.message);
                             } else {
                                 console.log(results);
                                 console.log('added');
-                                res.render('list', { users: results, title: 'List of Students', message: 'Successfully added' });
+                                res.render('list', { users: results, title: 'List of Students', messageSuccess: `Successfully added ${req.body.email}` });
                             }
                         })
                     })
             } else {
-                db.query('SELECT * FROM students', (err, results) => {
-                    return res.render('list', { users: results, title: 'List of Students', message: 'Duplicate email address' })})
+                db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id ORDER BY student_id', (err, results) => {
+                    return res.render('list', { users: results, title: 'List of Students', message: `${req.body.email} already exists.` })})
             }
     });
 
@@ -90,15 +90,13 @@ exports.delete = (req, res) => {
     db.query('DELETE from students where email = ?', 
     email, 
     (error, results) => {
-        db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id',
+        db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id ORDER BY student_id',
             (error, results) => {
                 console.log(results)
                 if (error) {
                     console.log(error.message);
                 } else {
-
-                    res.render('list', { users: results, title: 'List of Users' });
-
+                    res.render('list', { users: results, title: 'List of Users', message: `${req.params.email} has been deleted.` });
                 }
             });
 
@@ -129,12 +127,12 @@ exports.updateUser = (req, res) => {
     db.query('UPDATE students SET first_name = ?, last_name = ?, course_id = ? WHERE email = ?',
     [req.body.first_name, req.body.last_name, req.body.course_id, req.body.email],
     (err, results) => {
-        db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id', 
+        db.query('SELECT * FROM students INNER JOIN courses ON courses.course_id = students.course_id ORDER BY student_id', 
         (err, results) => {
             if(err){
                 console.log(err.message)
             } else {
-                res.render('list', { users: results, title: 'List of students', message: 'List Updated' });
+                res.render('list', { users: results, title: 'List of students', messageSuccess: `Successfully updated ${req.body.email}` });
             }
         })
     }
